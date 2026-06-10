@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: dathasystem-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dathasystem
+    ports:
+      - '5432:5432'
+    volumes:
+      - dathasystem_pgdata:/var/lib/postgresql/data
+
+volumes:
+  dathasystem_pgdata:
