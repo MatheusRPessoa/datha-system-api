@@ -7,6 +7,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ClientsModule } from './clients/clients.module';
+import { OrdersModule } from './orders/orders.module';
+import { StagesModule } from './stages/stages.module';
+import { AllocationsModule } from './allocations/allocations.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
@@ -25,6 +28,9 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     AuthModule,
     UsersModule,
     ClientsModule,
+    OrdersModule,
+    StagesModule,
+    AllocationsModule,
   ],
   controllers: [AppController],
   providers: [
