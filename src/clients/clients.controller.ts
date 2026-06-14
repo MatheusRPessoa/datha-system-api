@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -50,8 +60,13 @@ export class ClientsController {
   }
 
   @Post(':id/files')
-  @ApiOperation({ summary: 'Adiciona um arquivo (mockup/produção/documento) ao cliente' })
-  addFile(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CreateClientFileDto) {
+  @ApiOperation({
+    summary: 'Adiciona um arquivo (mockup/produção/documento) ao cliente',
+  })
+  addFile(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreateClientFileDto,
+  ) {
     return this.clientsService.addFile(id, dto);
   }
 

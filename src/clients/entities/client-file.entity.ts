@@ -17,7 +17,9 @@ export class ClientFile extends BaseEntity {
   @Column({ type: 'uuid' })
   CLIENT_ID: string;
 
-  @ManyToOne(() => Client, (client: Client) => client.ARQUIVOS, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Client, (client: Client) => client.ARQUIVOS, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'CLIENT_ID' })
-  client: Client;
+  CLIENT: Client;
 }

@@ -1,8 +1,29 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { CreateProductionFileDto } from './dto/create-production-file.dto';
+import { AtualizarCompraMaterialDto } from './dto/atualizar-compra-material.dto';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import { AuthUser } from '../auth/types/jwt-payload.type';
 import { OrderStage } from '../common/enums/order-stage.enum';
@@ -35,13 +56,17 @@ export class OrdersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Retorna um pedido pelo id (com itens, alocações e logs)' })
+  @ApiOperation({
+    summary: 'Retorna um pedido pelo id (com itens, alocações e logs)',
+  })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.ordersService.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo pedido (gera número e aloca atendimento)' })
+  @ApiOperation({
+    summary: 'Cria um novo pedido (gera número e aloca atendimento)',
+  })
   create(@Body() dto: CreateOrderDto, @Req() req: { user: AuthUser }) {
     return this.ordersService.create(dto, req.user);
   }
@@ -50,6 +75,13 @@ export class OrdersController {
   @ApiOperation({ summary: 'Atualiza um pedido' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateOrderDto) {
     return this.ordersService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Remove (soft delete) um pedido' })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ordersService.remove(id);
   }
 
   @Post(':id/alocar')
@@ -62,8 +94,14 @@ export class OrdersController {
 
   @Post(':id/finalizar')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Finaliza a etapa atual do pedido (e pré-aloca a próxima, se houver)' })
-  async finalizar(@Param('id', ParseUUIDPipe) id: string, @Body() dto: FinalizarDto) {
+  @ApiOperation({
+    summary:
+      'Finaliza a etapa atual do pedido (e pré-aloca a próxima, se houver)',
+  })
+  async finalizar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: FinalizarDto,
+  ) {
     await this.allocationService.finalizar(id, dto.STAGE, dto.USER_ID);
     return this.ordersService.findOne(id);
   }
@@ -71,8 +109,44 @@ export class OrdersController {
   @Post(':id/move')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Move o pedido para outra etapa do Kanban' })
-  async move(@Param('id', ParseUUIDPipe) id: string, @Body() dto: MoveOrderDto, @Req() req: { user: AuthUser }) {
+  async move(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: MoveOrderDto,
+    @Req() req: { user: AuthUser },
+  ) {
     await this.allocationService.move(id, dto.STAGE, req.user);
     return this.ordersService.findOne(id);
+  }
+
+  @Post(':id/arquivos')
+  @ApiOperation({
+    summary: 'Adiciona uma referência de arquivo de produção ao pedido',
+  })
+  addArquivo(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreateProductionFileDto,
+  ) {
+    return this.ordersService.addProductionFile(id, dto);
+  }
+
+  @Delete('arquivos/:fileId')
+  @ApiOperation({
+    summary: 'Remove uma referência de arquivo de produção do pedido',
+  })
+  removeArquivo(@Param('fileId', ParseUUIDPipe) fileId: string) {
+    return this.ordersService.removeProductionFile(fileId);
+  }
+
+  @Post(':id/compra-material')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Atualiza o status da compra de material do pedido',
+  })
+  atualizarCompraMaterial(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AtualizarCompraMaterialDto,
+    @Req() req: { user: AuthUser },
+  ) {
+    return this.ordersService.atualizarCompraMaterial(id, dto, req.user);
   }
 }

@@ -17,6 +17,11 @@ import { OrderPriority } from '../../common/enums/order-priority.enum';
 import { CreateOrderItemDto } from './create-order-item.dto';
 
 export class CreateOrderDto {
+  @ApiProperty({ description: 'Número do pedido (informado pelo atendente)' })
+  @IsString()
+  @IsNotEmpty({ message: 'Número é obrigatório' })
+  NUMERO: string;
+
   @ApiProperty()
   @IsUUID('4', { message: 'Cliente inválido' })
   CLIENTE_ID: string;

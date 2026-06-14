@@ -16,7 +16,11 @@ export class AuthService {
       throw new UnauthorizedException('Usuário inativo');
     }
 
-    const payload: JwtPayload = { SUB: user.ID, EMAIL: user.EMAIL, ROLE: user.ROLE };
+    const payload: JwtPayload = {
+      SUB: user.ID,
+      EMAIL: user.EMAIL,
+      ROLE: user.ROLE,
+    };
 
     return {
       succeeded: true,

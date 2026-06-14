@@ -9,7 +9,11 @@ import { StagesModule } from '../stages/stages.module';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StageAllocation, Order, OrderLog]), StagesModule, UsersModule],
+  imports: [
+    TypeOrmModule.forFeature([StageAllocation, Order, OrderLog]),
+    StagesModule,
+    UsersModule,
+  ],
   controllers: [AllocationsController],
   providers: [AllocationService],
   exports: [AllocationService],

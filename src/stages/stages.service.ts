@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { OrderStage, ORDER_STAGE_LABELS, ORDER_STAGE_SEQUENCE } from '../common/enums/order-stage.enum';
+import {
+  OrderStage,
+  ORDER_STAGE_LABELS,
+  ORDER_STAGE_SEQUENCE,
+} from '../common/enums/order-stage.enum';
 
 export type StageInfo = {
   value: OrderStage;
@@ -27,7 +31,9 @@ export class StagesService {
 
   getNext(stage: OrderStage): OrderStage | null {
     const index = this.getIndex(stage);
-    return index >= 0 && index < ORDER_STAGE_SEQUENCE.length - 1 ? ORDER_STAGE_SEQUENCE[index + 1] : null;
+    return index >= 0 && index < ORDER_STAGE_SEQUENCE.length - 1
+      ? ORDER_STAGE_SEQUENCE[index + 1]
+      : null;
   }
 
   isLast(stage: OrderStage): boolean {

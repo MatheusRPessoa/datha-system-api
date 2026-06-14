@@ -11,7 +11,11 @@ export abstract class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   ID: string;
 
-  @Column({ type: 'enum', enum: BaseEntityStatusEnum, default: BaseEntityStatusEnum.ATIVO })
+  @Column({
+    type: 'enum',
+    enum: BaseEntityStatusEnum,
+    default: BaseEntityStatusEnum.ATIVO,
+  })
   STATUS: BaseEntityStatusEnum;
 
   @CreateDateColumn({ type: 'timestamp' })

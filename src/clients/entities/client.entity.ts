@@ -19,6 +19,8 @@ export class Client extends BaseEntity {
   @Column({ length: 255 })
   PASTA: string;
 
-  @OneToMany(() => ClientFile, (file: ClientFile) => file.client, { cascade: true })
+  @OneToMany(() => ClientFile, (file: ClientFile) => file.CLIENT, {
+    cascade: true,
+  })
   ARQUIVOS: ClientFile[];
 }

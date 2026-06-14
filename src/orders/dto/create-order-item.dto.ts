@@ -1,7 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
-import { OrderItemSpecDto } from './order-item-spec.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class CreateOrderItemDto {
   @ApiProperty()
@@ -18,11 +16,4 @@ export class CreateOrderItemDto {
   @IsString()
   @IsNotEmpty({ message: 'Unidade é obrigatória' })
   UNIDADE: string;
-
-  @ApiPropertyOptional({ type: [OrderItemSpecDto] })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => OrderItemSpecDto)
-  ESPECIFICACOES?: OrderItemSpecDto[];
 }

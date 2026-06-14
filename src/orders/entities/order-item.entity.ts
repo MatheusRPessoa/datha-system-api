@@ -2,11 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { Order } from './order.entity';
 
-export type OrderItemSpec = {
-  label: string;
-  valor: string;
-};
-
 @Entity('order_items')
 export class OrderItem extends BaseEntity {
   @Column({ type: 'uuid' })
@@ -14,7 +9,7 @@ export class OrderItem extends BaseEntity {
 
   @ManyToOne(() => Order, (order) => order.ITENS, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ORDER_ID' })
-  order: Order;
+  ORDER: Order;
 
   @Column({ length: 255 })
   DESCRICAO: string;
@@ -24,7 +19,4 @@ export class OrderItem extends BaseEntity {
 
   @Column({ length: 50 })
   UNIDADE: string;
-
-  @Column({ type: 'jsonb', default: () => "'[]'" })
-  ESPECIFICACOES: OrderItemSpec[];
 }

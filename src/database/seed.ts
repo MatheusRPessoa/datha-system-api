@@ -11,7 +11,9 @@ async function seed() {
 
   const usersRepo = dataSource.getRepository(User);
 
-  const exists = await usersRepo.findOne({ where: { EMAIL: 'admin@dathasystem.com' } });
+  const exists = await usersRepo.findOne({
+    where: { EMAIL: 'admin@dathasystem.com' },
+  });
   if (exists) {
     console.log('Seed já executado, admin já existe.');
     await dataSource.destroy();

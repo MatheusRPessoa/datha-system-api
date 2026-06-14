@@ -9,7 +9,7 @@ export class OrderLog extends BaseEntity {
 
   @ManyToOne(() => Order, (order) => order.LOGS, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ORDER_ID' })
-  order: Order;
+  ORDER: Order;
 
   @Column({ length: 255 })
   QUEM: string;

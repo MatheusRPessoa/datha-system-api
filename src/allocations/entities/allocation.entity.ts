@@ -11,7 +11,7 @@ export class StageAllocation extends BaseEntity {
 
   @ManyToOne(() => Order, (order) => order.ALOCACOES, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ORDER_ID' })
-  order: Order;
+  ORDER: Order;
 
   @Column({ type: 'enum', enum: OrderStage })
   STAGE: OrderStage;
@@ -21,7 +21,7 @@ export class StageAllocation extends BaseEntity {
 
   @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'ALOCADO_POR' })
-  alocadoPorUser: User | null;
+  ALOCADO_POR_USUARIO: User | null;
 
   @Column({ type: 'timestamp', nullable: true })
   ALOCADO_EM: Date | null;
@@ -31,7 +31,7 @@ export class StageAllocation extends BaseEntity {
 
   @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'FINALIZADO_POR' })
-  finalizadoPorUser: User | null;
+  FINALIZADO_POR_USUARIO: User | null;
 
   @Column({ type: 'timestamp', nullable: true })
   FINALIZADO_EM: Date | null;

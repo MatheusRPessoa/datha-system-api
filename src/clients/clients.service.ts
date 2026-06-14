@@ -44,7 +44,10 @@ export class ClientsService {
     await this.clientsRepo.softRemove(client);
   }
 
-  async addFile(clientId: string, dto: CreateClientFileDto): Promise<ClientFile> {
+  async addFile(
+    clientId: string,
+    dto: CreateClientFileDto,
+  ): Promise<ClientFile> {
     await this.findOne(clientId);
     const file = this.filesRepo.create({ ...dto, CLIENT_ID: clientId });
     return this.filesRepo.save(file);
