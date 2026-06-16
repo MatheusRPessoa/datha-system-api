@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Client } from './entities/client.entity';
 import { ClientFile } from './entities/client-file.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { CreateClientFileDto } from './dto/create-client-file.dto';
+import { BaseEntityStatusEnum } from '../common/enums/base-entity-status.enum';
 
 @Injectable()
 export class ClientsService {
@@ -49,12 +50,18 @@ export class ClientsService {
     dto: CreateClientFileDto,
   ): Promise<ClientFile> {
     await this.findOne(clientId);
-    const file = this.filesRepo.create({ ...dto, CLIENT_ID: clientId });
+    const file = this.filesRepo.create({ ...dto, CLIENTE_ID: clientId });
     return this.filesRepo.save(file);
   }
 
   findFiles(clientId: string): Promise<ClientFile[]> {
-    return this.filesRepo.find({ where: { CLIENT_ID: clientId } });
+    return this.filesRepo.find({
+      where: {
+        CLIENTE_ID: clientId,
+        STATUS: Not(BaseEntityStatusEnum.EXCLUIDO),
+      },
+      order: { CRIADO_EM: 'DESC' },
+    });
   }
 
   async removeFile(fileId: string): Promise<void> {
