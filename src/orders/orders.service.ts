@@ -74,6 +74,14 @@ export class OrdersService {
     const qb = this.ordersRepo
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.CLIENTE', 'cliente')
+      .leftJoinAndSelect('order.ITENS', 'itens')
+      .leftJoinAndSelect('order.LOGS', 'logs')
+      .leftJoinAndSelect('order.ALOCACOES', 'alocacoes')
+      .leftJoinAndSelect('order.ARQUIVOS_PRODUCAO', 'arquivosProducao')
+      .leftJoinAndSelect(
+        'order.FORNECEDOR_COMPRA_MATERIAL',
+        'fornecedorCompraMaterial',
+      )
       .orderBy('order.CRIADO_EM', 'DESC');
 
     if (filters.stage) {
@@ -124,9 +132,17 @@ export class OrdersService {
       const existingItems = await this.itemsRepo.find({
         where: { ORDER_ID: id },
       });
-      if (existingItems.length) {
-        await this.itemsRepo.softRemove(existingItems);
+      const incomingIds = new Set(
+        ITENS.filter((item) => item.ID).map((item) => item.ID)
+      );
+
+      const removed = existingItems.filter(
+        (item) => !incomingIds.has(item.ID),
+      );
+      if (removed.length) {
+        await this.itemsRepo.softRemove(removed);
       }
+
       await this.itemsRepo.save(
         ITENS.map((item) => this.itemsRepo.create({ ...item, ORDER_ID: id })),
       );
@@ -158,6 +174,16 @@ export class OrdersService {
     dto: CreateProductionFileDto,
   ): Promise<Order> {
     await this.findOne(orderId);
+
+    if (dto.ITEM_ID) {
+      const item = await this.itemsRepo.findOne({
+        where: { ID: dto.ITEM_ID, ORDER_ID: orderId },
+      });
+      if (!item) {
+        throw new NotFoundException('Item não encontrado neste pedido');
+      }
+    }
+
     const file = this.filesRepo.create({ ...dto, ORDER_ID: orderId });
     await this.filesRepo.save(file);
     return this.findOne(orderId);
