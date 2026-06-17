@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -60,6 +61,9 @@ export class AllocationService {
     const name = userName ?? (await this.usersService.findOne(userId)).NOME;
 
     const allocation = await this.upsertAllocation(orderId, stage);
+    if (allocation.ALOCADO_POR) {
+      throw new ConflictException('Etapa já foi alocada');
+    }
     allocation.ALOCADO_POR = userId;
     allocation.ALOCADO_EM = new Date();
     const saved = await this.allocationsRepo.save(allocation);
@@ -89,8 +93,11 @@ export class AllocationService {
     const allocation = await this.allocationsRepo.findOne({
       where: { ORDER_ID: orderId, STAGE: stage },
     });
-    if (!allocation) {
+    if (!allocation || !allocation.ALOCADO_POR) {
       throw new NotFoundException('Etapa ainda não foi alocada');
+    }
+    if (allocation.FINALIZADO_POR) {
+      throw new ConflictException('Etapa já foi finalizada');
     }
 
     const user = await this.usersService.findOne(userId);
