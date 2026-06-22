@@ -21,6 +21,7 @@ import {
 import { AuthUser } from '../auth/types/jwt-payload.type';
 import { AllocationService } from '../allocations/allocation.service';
 import { SuppliersService } from '../suppliers/suppliers.service';
+import { ClientsService } from '../clients/clients.service';
 
 export type OrdersFilter = {
   stage?: OrderStage;
@@ -41,6 +42,7 @@ export class OrdersService {
     private readonly filesRepo: Repository<ProductionFile>,
     private readonly allocationService: AllocationService,
     private readonly suppliersService: SuppliersService,
+    private readonly clientsService: ClientsService,
   ) {}
 
   async create(dto: CreateOrderDto, user: AuthUser): Promise<Order> {
@@ -173,7 +175,7 @@ export class OrdersService {
     orderId: string,
     dto: CreateProductionFileDto,
   ): Promise<Order> {
-    await this.findOne(orderId);
+    const order = await this.findOne(orderId);
 
     if (dto.ITEM_ID) {
       const item = await this.itemsRepo.findOne({
@@ -186,6 +188,12 @@ export class OrdersService {
 
     const file = this.filesRepo.create({ ...dto, ORDER_ID: orderId });
     await this.filesRepo.save(file);
+
+    await this.clientsService.ensureFile(order.CLIENTE_ID, {
+      NOME: dto.NOME,
+      FORMATO: dto.FORMATO,
+    })
+
     return this.findOne(orderId);
   }
 

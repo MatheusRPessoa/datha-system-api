@@ -54,6 +54,21 @@ export class ClientsService {
     return this.filesRepo.save(file);
   }
 
+  async ensureFile(clientId: string, dto: CreateClientFileDto): Promise<void> {
+    const existing = await this.filesRepo.findOne({
+      where: {
+        CLIENTE_ID: clientId,
+        NOME: dto.NOME,
+        FORMATO: dto.FORMATO,
+        STATUS: Not(BaseEntityStatusEnum.EXCLUIDO),
+      },
+    });
+    if (existing) return;
+    await this.filesRepo.save(
+      this.filesRepo.create({ ...dto, CLIENTE_ID: clientId }),
+    );
+  }
+
   findFiles(clientId: string): Promise<ClientFile[]> {
     return this.filesRepo.find({
       where: {
